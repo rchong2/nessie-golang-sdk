@@ -65,6 +65,14 @@ func GetMerchantInfo(merchantId string) string {
 func CreateMerchant(merchantName string, category string, street_number string, street_name string, city string, state string, zip string,
          lat float64, lng float64) string {
 
+    if state.len > 2 {
+        fmt.Println("State field needs to be the two letter abbreviation of the state")
+    }
+
+    if zip.len > 5 || isNumeric(zip) {
+        fmt.Println("Zip code field needs to be numeric and have a length of 5")
+    }
+
     url := baseUrl + "?key=" + apiKey
 
     fmt.Println("URL:>", url)
@@ -95,9 +103,9 @@ func CreateMerchant(merchantName string, category string, street_number string, 
     
     payloadStr = payloadStr + `}`
 
-    fmt.Println("geocode payload:", string(geocode))
-    fmt.Println("address payload:", string(address))
-    fmt.Println("payload:", string(payloadStr))
+    // fmt.Println("geocode payload:", string(geocode))
+    // fmt.Println("address payload:", string(address))
+    // fmt.Println("payload:", string(payloadStr))
 
     var jsonStr = []byte(payloadStr)
     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
@@ -172,4 +180,11 @@ func UpdateMerchant(merchantId string, merchantName string, category string, str
     var response = string(body)
     //fmt.Println("Response Body:", response)
     return response
+}
+
+func IsNumeric (text string) {
+    if _, err := strconv.Atoi(v); err == nil {
+        return true
+    }
+    return false
 }
