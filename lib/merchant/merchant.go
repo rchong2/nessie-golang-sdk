@@ -7,12 +7,20 @@ import(
     "io/ioutil"
     "strconv"
     "bytes"
+    "strings"
     "../shared"
 )
 
 const baseUrl = "http://api.reimaginebanking.com/merchants"
 var apiKey = shared.ApiKey
 const blankNumber = math.SmallestNonzeroFloat64
+
+func IsNumeric (text string) bool{
+    if _, err := strconv.Atoi(text); err == nil {
+        return true
+    }
+    return false
+}
 
 //GET: Returns the merchants that have been assigned to you
 func GetAllMerchants(lat float64, lng float64, rad int) string {
@@ -62,8 +70,31 @@ func GetMerchantInfo(merchantId string) string {
 
 //POST: Creates a merchant
 //For optional Params, use empty string "" and blankNumber for empty lat/lng
-func CreateMerchant(merchantName string, category string, street_number string, street_name string, city string, state string, zip string,
+func CreateMerchant(merchantName string, categories []string, street_number string, street_name string, city string, state string, zip string,
          lat float64, lng float64) string {
+
+    if len(categories) == 0 {
+        fmt.Println("Categories field cannot be empty")
+    }
+
+    if len(state) > 2 {
+        fmt.Println("State field needs to be the two letter abbreviation of the state")
+    }
+
+    if len(zip) != 5 || !IsNumeric(zip) {
+        fmt.Println("Zip code field needs to be numeric and have a length of 5")
+    }
+
+    formattedCategories := make([]string, len(categories))
+
+    for _, category := range categories {
+        formattedCategories = append(formattedCategories, `"`+ category +`"`)
+    }
+
+    formattedCategories = append(formattedCategories[:0], formattedCategories[2:]...)
+
+    categoriesString := "["
+    categoriesString = categoriesString + strings.Join(formattedCategories, ",") + "]"
 
     url := baseUrl + "?key=" + apiKey
 
@@ -81,9 +112,7 @@ func CreateMerchant(merchantName string, category string, street_number string, 
 
     var payloadStr = `{"name":"` + merchantName + `"`
 
-    if len(category) > 0{
-    	payloadStr = payloadStr + `, "category":"` + category + `"`
-    }
+    payloadStr = payloadStr + `, "category":` + categoriesString
 
     if len(street_number) > 0{
     	payloadStr = payloadStr + `,"address":` + address
@@ -95,8 +124,11 @@ func CreateMerchant(merchantName string, category string, street_number string, 
     
     payloadStr = payloadStr + `}`
 
-    fmt.Println("geocode payload:", string(geocode))
-    fmt.Println("address payload:", string(address))
+    // fmt.Println("geocode payload:", string(geocode))
+    // fmt.Println("address payload:", string(address))
+    fmt.Println("categories: ", categories)
+    fmt.Println("formattedCategories: ", formattedCategories)
+    fmt.Println("JSONcategories:", categoriesString)
     fmt.Println("payload:", string(payloadStr))
 
     var jsonStr = []byte(payloadStr)
@@ -119,10 +151,33 @@ func CreateMerchant(merchantName string, category string, street_number string, 
 
 //PUT: Updates a specific merchant
 //For optional Params, use empty string "" and blankNumber for empty lat/lng
-func UpdateMerchant(merchantId string, merchantName string, category string, street_number string, street_name string, city string, state string, zip string,
+func UpdateMerchant(merchantId string, merchantName string, categories []string, street_number string, street_name string, city string, state string, zip string,
          lat float64, lng float64) string {
 
     url := baseUrl + "/" + merchantId + "?key=" + apiKey
+
+    if len(categories) == 0 {
+        fmt.Println("Categories field cannot be empty")
+    }
+
+    if len(state) > 2 {
+        fmt.Println("State field needs to be the two letter abbreviation of the state")
+    }
+
+    if len(zip) != 5 || !IsNumeric(zip) {
+        fmt.Println("Zip code field needs to be numeric and have a length of 5")
+    }
+
+    formattedCategories := make([]string, len(categories))
+
+    for _, category := range categories {
+        formattedCategories = append(formattedCategories, `"`+ category +`"`)
+    }
+
+    formattedCategories = append(formattedCategories[:0], formattedCategories[2:]...)
+
+    categoriesString := "["
+    categoriesString = categoriesString + strings.Join(formattedCategories, ",") + "]"
 
     fmt.Println("URL:>", url)
 
@@ -138,9 +193,7 @@ func UpdateMerchant(merchantId string, merchantName string, category string, str
 
     var payloadStr = `{"name":"` + merchantName + `"`
 
-    if len(category) > 0{
-    	payloadStr = payloadStr + `, "category":"` + category + `"`
-    }
+    payloadStr = payloadStr + `, "category":` + categoriesString
 
     if len(street_number) > 0{
     	payloadStr = payloadStr + `,"address":` + address
