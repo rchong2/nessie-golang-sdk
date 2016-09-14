@@ -12,7 +12,7 @@ import(
     //"./lib/branch"
     //"./lib/customer"
     //"./lib/deposit"
-    //"./lib/merchant"
+    "./lib/merchant"
     //"./lib/purchase"
     //"./lib/transfer"
     //"./lib/withdrawal"
@@ -75,13 +75,14 @@ func main() {
     //deposit.DeleteDeposit("5636ecd10afebb140066ce53")
 
     //=====================Merchant====================== (DONE)
+    categories := []string{"Food", "Cafe"}
     //fmt.Println(merchant.GetAllMerchants(38.9283, -77.1753, 1))
-    //merchant.CreateMerchant("Dunkin Donuts", "Food", "11006", "Capital One Dr.", "McLean", "VA", "20931", 38, -77)
+    merchant.CreateMerchant("Dunkin Donuts", categories, "11006", "Capital One Dr.", "McLean", "VA", "20931", 38, -77)
     //merchant.CreateMerchant("Dunkin Donuts3", "", "11006", "Capital One Dr.", "McLean", "VA", "20931", 38, -77)
     //merchant.CreateMerchant("Dunkin Donuts", "", "", "", "", "", "", 38.223, -77.111)
     //merchant.CreateMerchant("Dunkin Donuts5", "Food", "", "", "", "", "", -999, -999)
     //merchant.GetMerchantInfo("562d1cf40afebb140066cd8a")
-    //merchant.UpdateMerchant("562db1380afebb140066cda1", "Starbucks","","","","","","", 67.333,-1.43)
+    merchant.UpdateMerchant("57cf75cea73e494d8675ec49", "Dunkin", categories,"","","","","", 67.333,-1.43)
     //merchant.UpdateMerchant("562db1380afebb140066cda1", "Starbucks","","","","","","", -999,-999)
     //merchant.UpdateMerchant("562db1380afebb140066cda1", "Plan 9 Records", "", "11006", "Capital One Dr.", "McLean", "VA", "20931", 38, -77)
     //merchant.UpdateMerchant("562db1380afebb140066cda1", "Wootton High School", "Education", "", "", "", "", "", -999, -999)
